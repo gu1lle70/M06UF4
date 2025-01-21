@@ -100,7 +100,15 @@ function ball_reset ()
 
 	ball_x_dir = -ball_x_dir;
 }
+function send_scores ()
+{
+let score_num = {
+    s1: player1_score,
+    s2: player2_score
+   	}
 
+    ws.send( JSON.stringify(score_num) );
+}
 
 function update() {
 
@@ -116,13 +124,16 @@ function update() {
 		if (ball.x > win_w) {
 			player1_score += 1;
 			player1_score_text.setText(player1_score);
+			send_scores();
 			ball_reset();
 		}
 
 		if (ball.x < 0) {
 			player2_score += 1;
 			player2_score_text.setText(player2_score);
+			send_scores();
 			ball_reset();
+			
 		}
 
 		if (ball.y > win_h || ball.y < 0) ball_y_dir = -ball_y_dir;
@@ -132,13 +143,6 @@ function update() {
 			by: ball.y
 		};
 		ws.send( JSON.stringify(ball_pos) );
-
-		let score_num = {
-             s1: player1_score,
-             s2: player2_score
-         }
-		ws.send( JSON.stringify(score_num) );
-
 	}
 	if (this.cursors.up.isDown) {
 		if (player_num == 1) {
