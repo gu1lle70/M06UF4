@@ -35,6 +35,15 @@ ws.onmessage = function (msg) {
 		ball.x = data.bx;
 		ball.y = data.by;
 	}
+	else if(data.s1 != null){
+
+		player1_score = data.s1;
+		player2_score = data.s2;
+		player1_score_text.setText(player1_score);
+		player2_score_text.setText(player2_score);
+
+	}
+
 
 };
 
@@ -80,6 +89,8 @@ function create ()
 	player2 = this.add.rectangle(player2_x, player2_y, players_w, players_h, 0xffffff);
 	ball = this.add.rectangle(ball_x, ball_y, ball_w, ball_h, 0xffff00);
 	this.cursors = this.input.keyboard.createCursorKeys();
+	player1_score_text = this.add.text(player1_x, player1_x, "0");
+	player2_score_text = this.add.text(player2_x, player1_x, "0");
 }
 
 function ball_reset ()
@@ -97,27 +108,36 @@ function update() {
 		return;
 
 	if (player_num == 1){
-
+		
+		
 		ball.x += ball_x_dir;
 		ball.y += ball_y_dir;
 
 		if (ball.x > win_w) {
 			player1_score += 1;
+			player1_score_text.setText(player1_score);
 			ball_reset();
 		}
 
 		if (ball.x < 0) {
 			player2_score += 1;
+			player2_score_text.setText(player2_score);
 			ball_reset();
 		}
 
 		if (ball.y > win_h || ball.y < 0) ball_y_dir = -ball_y_dir;
-	
+		
 		let ball_pos = {
 			bx: ball.x,
 			by: ball.y
 		};
 		ws.send( JSON.stringify(ball_pos) );
+
+		let score_num = {
+             s1: player1_score,
+             s2: player2_score
+         }
+		ws.send( JSON.stringify(score_num) );
 
 	}
 	if (this.cursors.up.isDown) {

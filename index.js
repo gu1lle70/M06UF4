@@ -42,6 +42,9 @@ ws_server.on('connection', function (conn){
 			else if(info.by != null){
 				player2.send( JSON.stringify(info));
 			}
+			else if(info.s1 != null){
+				player2.send( JSON.stringify(info));
+			}
 		});
 	}
 	else if(player2 == null){
