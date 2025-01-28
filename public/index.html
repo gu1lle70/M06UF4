@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+	<meta charset="UTF-8" />
 	<title>Pengti</title>
 
 
@@ -44,7 +45,20 @@ ws.onmessage = function (msg) {
 	}
 	else if(data.game_over != null){
 		game_over = true;
+
+		if(data.winner == player_num){
+			game_over_text.setText("¡HAS GANADO!");
+			game_over_text.setColor("#23ff00");
+		}
+		else{
+			game_over_text.setText("¡HAS PERDÍO");
+			game_over_text.setColor("#ff0000");
+		}		
+	}	
+	else if(data.game_start != null){
+		game_start = true;
 	}
+	
 
 };
 
@@ -79,7 +93,11 @@ let ball_x_init=400, ball_y_init=225;
 let ball_x=ball_x_init, ball_y=ball_y_init;
 
 let ball_x_dir=1,ball_y_dir=1;
+
+let game_start = false;
+
 let game_over = false;
+let game_over_text;
 
 function preload ()
 {
@@ -93,6 +111,9 @@ function create ()
 	this.cursors = this.input.keyboard.createCursorKeys();
 	player1_score_text = this.add.text(player1_x, player1_x, "0");
 	player2_score_text = this.add.text(player2_x, player1_x, "0");
+
+	game_over_text = this.add.text(win_w/2,win_h/2, "", { fontFamily: 'Comic Sans MS', fontSize: 96, color: '#ff0000'});
+	game_over_text.setOrigin(0.5,0.5);
 	get_ball_direction();
 }
 function get_ball_direction(){
@@ -134,7 +155,9 @@ function update() {
 	if(player_num == 0)
 		return;
 	if(game_over)
-		return;	
+		return;
+	if(!game_start)
+		return;
 
 	if (player_num == 1){
 		

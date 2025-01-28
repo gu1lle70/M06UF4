@@ -29,6 +29,11 @@ ws_server.on('connection', function (conn){
 
 		player1.send( JSON.stringify(info) );
 
+		player1.on('close', function (){
+			console.log("Player 1 disconected");
+			player1 = null;
+		});
+
 		player1.on('message', function (msg){
 		 	if(player2 == null)
 		 		return;
@@ -47,8 +52,13 @@ ws_server.on('connection', function (conn){
 				
 				if(info.s1 >= 3 || info.s2 >= 3){
 					let data = {
-						game_over: true
+						game_over: true,
+						winner: 0
 					};
+					if(info.s1 >= 3)
+						data.winner = 1;
+					else
+						data.winner = 2;
 
 					let data_json = JSON.stringify(data);
 
@@ -67,8 +77,23 @@ ws_server.on('connection', function (conn){
 		let info = {
         	player_num: 2
         };
-        
 		player2.send( JSON.stringify(info) );
+
+		player2.on('close', function (){
+        console.log("Player 2 disconected");
+ 		player2 = null;
+ 	    });
+		setTimeout(function() {
+			let info = {
+				game_start: true
+			};
+
+			let info_json = JSON.stringify(info);
+
+			player1.send( info_json );
+			player2.send( info_json );
+
+		}, 500);
 
 		player2.on('message', function (msg){
 			if(player1 == null)
