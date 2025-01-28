@@ -12,7 +12,7 @@
 
 let player_num = 0;
 
-let ws = new WebSocket('ws://10.40.3.35:7777');
+let ws = new WebSocket('ws://10.40.2.54:7777');
 
 ws.onmessage = function (msg) {
 	console.log(msg.data);
@@ -41,9 +41,10 @@ ws.onmessage = function (msg) {
 		player2_score = data.s2;
 		player1_score_text.setText(player1_score);
 		player2_score_text.setText(player2_score);
-
 	}
-
+	else if(data.game_over != null){
+		game_over = true;
+	}
 
 };
 
@@ -78,6 +79,7 @@ let ball_x_init=400, ball_y_init=225;
 let ball_x=ball_x_init, ball_y=ball_y_init;
 
 let ball_x_dir=1,ball_y_dir=1;
+let game_over = false;
 
 function preload ()
 {
@@ -91,6 +93,22 @@ function create ()
 	this.cursors = this.input.keyboard.createCursorKeys();
 	player1_score_text = this.add.text(player1_x, player1_x, "0");
 	player2_score_text = this.add.text(player2_x, player1_x, "0");
+	get_ball_direction();
+}
+function get_ball_direction(){
+	let angle = Phaser.Math.Between(-75, 75);
+	if(Math.abs(angle) < 10){
+		if(angle < 0){
+			angle -= 10;
+		}
+		else{
+			angle += 10;
+		}
+	}
+	angle = Phaser.Math.DegToRad(angle);
+	ball_x_dir = Math.cos(angle) * (Math.random() < 0.5 ? -1 : 1);
+	ball_y_dir = Math.sin(angle);
+
 }
 
 function ball_reset ()
@@ -99,6 +117,7 @@ function ball_reset ()
 	ball.y = ball_y_init;
 
 	ball_x_dir = -ball_x_dir;
+	get_ball_direction();
 }
 function send_scores ()
 {
@@ -114,6 +133,8 @@ function update() {
 
 	if(player_num == 0)
 		return;
+	if(game_over)
+		return;	
 
 	if (player_num == 1){
 		
@@ -138,6 +159,14 @@ function update() {
 
 		if (ball.y > win_h || ball.y < 0) ball_y_dir = -ball_y_dir;
 		
+	if(Phaser.Geom.Intersects.RectangleToRectangle(ball.getBounds(), player1.getBounds())){
+		ball_x_dir = 1;
+	}
+	if(Phaser.Geom.Intersects.RectangleToRectangle(ball.getBounds(), player2.getBounds())){
+		ball_x_dir = -1;
+	}
+
+
 		let ball_pos = {
 			bx: ball.x,
 			by: ball.y

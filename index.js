@@ -44,8 +44,22 @@ ws_server.on('connection', function (conn){
 			}
 			else if(info.s1 != null){
 				player2.send( JSON.stringify(info));
-			}
-		});
+				
+				if(info.s1 >= 3 || info.s2 >= 3){
+					let data = {
+						game_over: true
+					};
+
+					let data_json = JSON.stringify(data);
+
+					player1.send( data_json );
+					player2.send( data_json );
+
+					return;
+
+					}
+				}	
+			});
 	}
 	else if(player2 == null){
 		player2 = conn;
