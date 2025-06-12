@@ -1,6 +1,7 @@
 # m06uf4_2425
 Pong Online
 Documentación del Proyecto Pengti
+
 Bugs:
 Lo unico hay un problema en los espectadores y el movimiento de las palas el espectador ve el movimiento de las palas muy raro a veces no se mueven o hace flicker seguro que no estoy enviando correctamente la informacion al espectador
 
